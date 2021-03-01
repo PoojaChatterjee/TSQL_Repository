@@ -1,12 +1,45 @@
-Query the two cities in STATION with the shortest and longest CITY names, as well as their respective lengths (i.e.: number of characters in the name). If there is more than one smallest or largest city, choose the one that comes first when ordered alphabetically.
+-->Query the two cities in STATION with the shortest and longest CITY names, as well as their respective lengths (i.e.: number of characters in the name). 
+   If there is more than one smallest or largest city, choose the one that comes first when ordered alphabetically.
 
-    /*SELECT CITY,LEN(CITY) from Station where city in
-    (select top 1 city from Station where len(city) = (select max(len(city)) from station) order by city)
-    or city in 
-    (select top 1 city from station where len(city) = (select min(len(city)) from station) order by city );*/
+        /*SELECT CITY,LEN(CITY) from Station where city in
+        (select top 1 city from Station where len(city) = (select max(len(city)) from station) order by city)
+        or city in 
+        (select top 1 city from station where len(city) = (select min(len(city)) from station) order by city );*/
 
-    SELECT * FROM (
-    SELECT top 1 CITY,LEN(CITY) len_city from Station order by LEN(CITY),CITY) a
-    UNION
-    SELECT * FROM (
-    SELECT top 1 CITY,LEN(CITY) len_city from Station order by LEN(CITY) desc,CITY) b
+        /*This method is more elegant than the one above:*/
+        SELECT * FROM (
+        SELECT top 1 CITY,LEN(CITY) len_city from Station order by LEN(CITY),CITY) a
+        UNION
+        SELECT * FROM (
+        SELECT top 1 CITY,LEN(CITY) len_city from Station order by LEN(CITY) desc,CITY) b
+
+-->Query the list of CITY names starting with vowels (i.e., a, e, i, o, or u) from STATION. Your result cannot contain duplicates.
+
+        select distinct city from station where left(city,1) in ('a','e','i','o','u');
+    
+-->Query the list of CITY names ending with vowels (i.e., a, e, i, o, or u) from STATION. Your result cannot contain duplicates.    
+
+         select distinct city from station where right(city,1) in ('a','e','i','o','u');
+    
+-->Query the list of CITY names from STATION that do not start with vowels. Your result cannot contain duplicates.
+
+        select distinct city from station where left(city,1) not in ('a','e','i','o','u');
+    
+-->Query the list of CITY names from STATION that either do not start with vowels or do not end with vowels. Your result cannot contain duplicates.
+
+          select distinct city from station where left(city,1) not in ('a','e','i','o','u') or right(city,1) not in ('a','e','i','o','u');
+     
+-->Query the Western Longitude (LONG_W)where the smallest Northern Latitude (LAT_N) in STATION is greater than . Round your answer to  decimal places.
+     
+          Select  CAST(round(LONG_W,4) as decimal(18,4)) from station where LAT_N = (Select MIN(LAT_N) FROM station where LAT_N>38.7780 );
+     
+-->Consider P1(a,b) and P2(c,d) to be two points on a 2D plane.
+
+   a happens to equal the minimum value in Northern Latitude (LAT_N in STATION).
+   b happens to equal the minimum value in Western Longitude (LONG_W in STATION).
+   c happens to equal the maximum value in Northern Latitude (LAT_N in STATION).
+   d happens to equal the maximum value in Western Longitude (LONG_W in STATION).
+
+   Query the Manhattan Distance between points  and  and round it to a scale of  decimal places.
+
+         SELECT CAST(ROUND((MAX(LAT_N)-MIN(LAT_N))+(MAX(LONG_W)-MIN(LONG_W)),4) as decimal(18,4)) FROM STATION 
